@@ -9,26 +9,30 @@
   <meta name="theme-color" content="#2563eb">
   <link rel="manifest" href="?manifest=1">
   <title>ToDrive</title>
-  <!-- モバイル判定をCSSより先に実行 -->
+
+  <!-- モバイル判定：CSSロード前に実行 -->
   <script>
     if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth < 768) {
       document.documentElement.classList.add('is-mobile');
     }
   </script>
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
   <style>
+    /* ─── リセット・ベース ─── */
     * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
     html, body { height: 100%; margin: 0; padding: 0; }
     body { height: 100dvh; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f1f5f9; }
-    input, textarea { font-size: 16px; }
+    input, textarea { font-size: 16px; font-family: inherit; }
 
     /* ─── アニメーション ─── */
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    .fade-in { animation: fadeIn 0.18s ease forwards; }
+    @keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
     @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes spin    { to { transform: rotate(360deg); } }
+    .fade-in  { animation: fadeIn  0.18s ease forwards; }
     .slide-up { animation: slideUp 0.28s ease forwards; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .spin { animation: spin 0.8s linear infinite; }
+    .spin     { animation: spin    0.8s linear infinite; }
 
     /* ─── スクロールバー ─── */
     ::-webkit-scrollbar { width: 4px; }
@@ -64,7 +68,7 @@
     .mr-attach  { display: inline-flex; align-items: center; gap: 4px; color: #3b82f6; font-size: 13px; margin-top: 3px; }
     .mr-qs      { width: 44px; height: 44px; border-radius: 50%; border: none; background: #f0f4ff; color: #3b82f6; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
-    /* ─── 詳細パネル ─── */
+    /* ─── 詳細パネル（デスクトップ） ─── */
     #detailBody img { max-width: 100%; height: auto; }
     #detailBody a { color: #2563eb; text-decoration: underline; }
 
@@ -72,18 +76,52 @@
     header { padding-top: env(safe-area-inset-top); }
     .mobile-action-bar { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
 
-    /* ══════════════════════════════════
-       モバイル専用（.is-mobile クラス）
-       GAS iframeはviewportが正しく動作しないためvw単位使用
-       計算式: 目標px ÷ 390(iPhone幅) × 100 = vw値
-    ══════════════════════════════════ */
+    /* ══════════════════════════════════════════════════════════
+       モバイル専用スタイル（.is-mobile クラス）
+       GAS iframeはviewportが正しく動作しないためvw単位を使用
+       計算式: 目標px ÷ 390(iPhone標準幅) × 100 = vw値
+    ══════════════════════════════════════════════════════════ */
+
+    /* ─ レイアウト ─ */
     html.is-mobile #detailPanelDesktop { display: none !important; }
     html.is-mobile #listPanel { max-width: 100% !important; min-width: 0 !important; border-right: none !important; background: #fff !important; }
-    html.is-mobile #emailList { padding: 0 !important; }
+    html.is-mobile #emailList { padding: 0 !important; padding-bottom: calc(15vw + env(safe-area-inset-bottom)) !important; }
     html.is-mobile .header-tabs { display: none !important; }
     html.is-mobile #bottomNav { display: flex !important; }
     html.is-mobile .mobile-only { display: flex !important; }
-    html.is-mobile #emailList { padding-bottom: calc(15vw + env(safe-area-inset-bottom)) !important; }
+
+    /* ─ ヘッダー（vw化） ─ */
+    html.is-mobile header { height: 14vw !important; padding: 0 4vw !important; }
+    html.is-mobile .hd-logo { width: 8.7vw !important; height: 8.7vw !important; border-radius: 2.5vw !important; }
+    html.is-mobile .hd-logo i { font-size: 3.8vw !important; }
+    html.is-mobile .hd-title { font-size: 4.6vw !important; }
+    html.is-mobile .hd-gap { gap: 2.5vw !important; }
+    html.is-mobile .mobile-only { width: 10.8vw !important; height: 10.8vw !important; font-size: 5vw !important; }
+
+    /* ─ 検索バー（vw化） ─ */
+    html.is-mobile #listSearchWrap { padding: 3vw 4vw 2vw !important; }
+    html.is-mobile #searchInput { font-size: 4vw !important; padding: 3.3vw 3.5vw 3.3vw 10vw !important; border-radius: 3.5vw !important; }
+    html.is-mobile #listSearchWrap .search-icon { font-size: 3.5vw !important; left: 7.5vw !important; }
+    html.is-mobile #mailCount { font-size: 3.5vw !important; color: #8e8e93 !important; padding: 1vw 4vw 2vw !important; }
+
+    /* ─ Gmail風ロウ（vw化） ─ */
+    html.is-mobile .mail-row { gap: 3.5vw !important; padding: 3.5vw 4vw !important; min-height: 19vw !important; }
+    html.is-mobile .mr-avatar { width: 11.3vw !important; height: 11.3vw !important; font-size: 4.9vw !important; }
+    html.is-mobile .mr-top { margin-bottom: 0.5vw !important; gap: 2vw !important; }
+    html.is-mobile .mr-sender  { font-size: 4.4vw !important; }
+    html.is-mobile .mr-date    { font-size: 3.3vw !important; }
+    html.is-mobile .mr-subject { font-size: 3.8vw !important; }
+    html.is-mobile .mr-snippet { font-size: 3.6vw !important; }
+    html.is-mobile .mr-attach  { font-size: 3vw !important; }
+    html.is-mobile .mr-qs { width: 11.3vw !important; height: 11.3vw !important; font-size: 5vw !important; border-radius: 50% !important; }
+
+    /* ─ ボトムナビ（vw化） ─ */
+    html.is-mobile #bottomNav > div { min-height: 12vw; }
+    html.is-mobile #bottomNav button { padding: 2.5vw 0 2vw !important; gap: 0.8vw !important; }
+    html.is-mobile #bottomNav i     { font-size: 6.2vw !important; }
+    html.is-mobile #bottomNav span  { font-size: 3vw !important; }
+
+    /* ─ トースト（vw化） ─ */
     html.is-mobile #toast {
       bottom: calc(16vw + env(safe-area-inset-bottom)) !important;
       font-size: 3.8vw !important;
@@ -94,36 +132,55 @@
     }
     html.is-mobile #toastIcon { font-size: 4.6vw !important; }
 
-    /* ─ ヘッダー vw化 ─ */
-    html.is-mobile header { height: 14vw !important; padding: 0 4vw !important; }
-    html.is-mobile .hd-logo { width: 8.7vw !important; height: 8.7vw !important; border-radius: 2.5vw !important; }
-    html.is-mobile .hd-logo i { font-size: 3.8vw !important; }
-    html.is-mobile .hd-title { font-size: 4.6vw !important; }
-    html.is-mobile .hd-gap { gap: 2.5vw !important; }
-    html.is-mobile .mobile-only { width: 10.8vw !important; height: 10.8vw !important; font-size: 5vw !important; }
+    /* ─ 詳細ビュー ヘッダー（vw化） ─ */
+    html.is-mobile .dv-header { height: 14vw !important; padding: 0 4vw 0 1vw !important; }
+    html.is-mobile .dv-back { font-size: 5.6vw !important; min-width: 11.3vw !important; height: 11.3vw !important; }
+    html.is-mobile #detailSubjectMobile { font-size: 4vw !important; }
 
-    /* ─ 検索バー vw化 ─ */
-    html.is-mobile #listSearchWrap { padding: 3vw 4vw 2vw !important; }
-    html.is-mobile #searchInput { font-size: 4vw !important; padding: 3.3vw 3.5vw 3.3vw 10vw !important; border-radius: 3.5vw !important; }
-    html.is-mobile #listSearchWrap .search-icon { font-size: 3.5vw !important; left: 7.5vw !important; }
-    html.is-mobile #mailCount { font-size: 3.5vw !important; color: #8e8e93 !important; padding: 1vw 4vw 2vw !important; }
+    /* ─ 詳細ビュー コンテンツ（vw化） ─ */
+    html.is-mobile #detailContentMobile { padding: 4.1vw !important; }
+    html.is-mobile .dv-meta { margin-bottom: 4.1vw !important; padding-bottom: 4.1vw !important; border-bottom: 1px solid #f0f0f0; }
+    html.is-mobile .dv-from { font-size: 3.8vw !important; }
+    html.is-mobile .dv-date-str { font-size: 3.3vw !important; }
+    html.is-mobile .dv-body { font-size: 4vw !important; line-height: 1.9 !important; }
+    html.is-mobile .dv-attach-hdr { margin-top: 5.1vw !important; padding-top: 4.1vw !important; margin-bottom: 3.1vw !important; }
+    html.is-mobile .dv-attach-title-text { font-size: 3.3vw !important; }
+    html.is-mobile .dv-attach-item { padding: 3.6vw !important; border-radius: 3.6vw !important; margin-bottom: 2.1vw !important; gap: 3.1vw !important; }
+    html.is-mobile .dv-attach-icon { font-size: 5.1vw !important; }
+    html.is-mobile .dv-attach-name { font-size: 3.8vw !important; }
+    html.is-mobile .dv-attach-size { font-size: 3.3vw !important; }
 
-    /* ─ Gmail風ロウ vw化 ─ */
-    html.is-mobile .mail-row { gap: 3.5vw !important; padding: 3.5vw 4vw !important; min-height: 19vw !important; }
-    html.is-mobile .mr-avatar { width: 11.3vw !important; height: 11.3vw !important; font-size: 4.9vw !important; }
-    html.is-mobile .mr-top { margin-bottom: 0.5vw !important; gap: 2vw !important; }
-    html.is-mobile .mr-sender { font-size: 4.4vw !important; }
-    html.is-mobile .mr-date { font-size: 3.3vw !important; }
-    html.is-mobile .mr-subject { font-size: 3.8vw !important; }
-    html.is-mobile .mr-snippet { font-size: 3.6vw !important; }
-    html.is-mobile .mr-attach { font-size: 3vw !important; }
-    html.is-mobile .mr-qs { width: 11.3vw !important; height: 11.3vw !important; font-size: 5vw !important; border-radius: 50% !important; }
+    /* ─ 詳細ビュー メモ（vw化） ─ */
+    html.is-mobile .dv-memo-section { padding: 0 4.1vw 4.1vw !important; }
+    html.is-mobile .dv-memo-label { font-size: 3.6vw !important; font-weight: 600; padding-top: 4.1vw !important; margin-bottom: 2.6vw !important; }
+    html.is-mobile #memoAreaMobile { font-size: 4vw !important; padding: 3.6vw !important; border-radius: 3.6vw !important; }
 
-    /* ─ ボトムナビ vw化 ─ */
-    html.is-mobile #bottomNav > div { min-height: 12vw; }
-    html.is-mobile #bottomNav button { padding: 2.5vw 0 2vw !important; gap: 0.8vw !important; }
-    html.is-mobile #bottomNav i { font-size: 6.2vw !important; }
-    html.is-mobile #bottomNav span { font-size: 3vw !important; }
+    /* ─ アクションバー（vw化） ─ */
+    html.is-mobile .mob-ab { padding: 3vw 4.1vw !important; gap: 2.6vw !important; }
+    html.is-mobile .mob-ab .btn-cancel { font-size: 4.1vw !important; padding: 4.1vw !important; border-radius: 3.6vw !important; }
+    html.is-mobile .mob-ab .btn-save   { font-size: 4.1vw !important; padding: 4.1vw !important; border-radius: 3.6vw !important; }
+    html.is-mobile .mob-ab .btn-save i { font-size: 4.1vw !important; }
+
+    /* ─ ローディング（vw化） ─ */
+    html.is-mobile .ld-icon { font-size: 9.2vw !important; }
+    html.is-mobile #loadingText { font-size: 3.8vw !important; }
+
+    /* ─ フォルダモーダル（vw化） ─ */
+    html.is-mobile .fm-sheet {
+      padding: 6.2vw !important;
+      border-radius: 6.2vw 6.2vw 0 0 !important;
+      padding-bottom: max(6.2vw, env(safe-area-inset-bottom)) !important;
+    }
+    html.is-mobile .fm-title   { font-size: 4.6vw !important; margin-bottom: 1vw !important; }
+    html.is-mobile .fm-hint    { font-size: 3.6vw !important; margin-bottom: 4.1vw !important; }
+    html.is-mobile #folderNameInput {
+      font-size: 4vw !important;
+      padding: 3.8vw !important;
+      border-radius: 3.6vw !important;
+      margin-bottom: 4.1vw !important;
+    }
+    html.is-mobile .fm-cancel { font-size: 4.1vw !important; padding: 4.1vw !important; border-radius: 3.6vw !important; }
+    html.is-mobile .fm-save   { font-size: 4.1vw !important; padding: 4.1vw !important; border-radius: 3.6vw !important; }
   </style>
 </head>
 <body>
@@ -216,28 +273,34 @@
 <div id="bottomNav" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:45;background:#fff;border-top:1px solid #e2e8f0;">
   <div style="display:flex;padding-bottom:env(safe-area-inset-bottom);">
     <button onclick="switchTab(0)" id="btab0" style="flex:1;padding:10px 0 8px;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;color:#2563eb;">
-      <i class="fa-solid fa-inbox" style="font-size:24px;"></i>
-      <span style="font-size:12px;font-weight:600;">未処理</span>
+      <i class="fa-solid fa-inbox"></i>
+      <span style="font-weight:600;">未処理</span>
     </button>
     <button onclick="switchTab(1)" id="btab1" style="flex:1;padding:10px 0 8px;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;color:#8e8e93;">
-      <i class="fa-solid fa-clock-rotate-left" style="font-size:24px;"></i>
-      <span style="font-size:12px;font-weight:600;">履歴</span>
+      <i class="fa-solid fa-clock-rotate-left"></i>
+      <span style="font-weight:600;">履歴</span>
     </button>
   </div>
 </div>
 
-<!-- ===== モバイル詳細 ===== -->
+<!-- ===== モバイル詳細ビュー ===== -->
 <div id="detailViewMobile" style="display:none;position:fixed;inset:0;background:#fff;z-index:50;flex-direction:column;">
-  <div style="display:flex;align-items:center;gap:4px;padding:0 8px;height:56px;padding-top:env(safe-area-inset-top);border-bottom:1px solid #f0f0f0;flex-shrink:0;">
-    <button onclick="backToList()" style="color:#2563eb;background:none;border:none;font-size:22px;cursor:pointer;min-width:44px;height:44px;display:flex;align-items:center;justify-content:center;">
+
+  <!-- 詳細ヘッダー -->
+  <div class="dv-header" style="display:flex;align-items:center;gap:4px;padding:0 8px;height:56px;padding-top:env(safe-area-inset-top);border-bottom:1px solid #f0f0f0;flex-shrink:0;">
+    <button class="dv-back" onclick="backToList()" style="color:#2563eb;background:none;border:none;font-size:22px;cursor:pointer;min-width:44px;height:44px;display:flex;align-items:center;justify-content:center;">
       <i class="fa-solid fa-chevron-left"></i>
     </button>
     <div id="detailSubjectMobile" style="flex:1;font-size:16px;font-weight:600;color:#1a1a1a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></div>
   </div>
+
+  <!-- 詳細コンテンツ -->
   <div style="flex:1;overflow-y:auto;">
     <div id="detailContentMobile" style="padding:16px;"></div>
-    <div style="padding:0 16px 16px;border-top:1px solid #f0f0f0;">
-      <div style="font-size:14px;font-weight:600;color:#374151;margin-bottom:10px;padding-top:16px;">処理指示メモ</div>
+
+    <!-- メモエリア -->
+    <div class="dv-memo-section" style="padding:0 16px 16px;border-top:1px solid #f0f0f0;">
+      <div class="dv-memo-label" style="font-size:14px;font-weight:600;color:#374151;padding-top:16px;margin-bottom:10px;">処理指示メモ</div>
       <textarea id="memoAreaMobile" rows="4"
         style="width:100%;border:1px solid #e2e8f0;border-radius:14px;padding:14px;resize:none;outline:none;background:#f8fafc;line-height:1.6;"
         placeholder="例：請求書をfreeeに入力後、経理にSlack連絡"
@@ -245,9 +308,11 @@
         onblur="this.style.borderColor='#e2e8f0';this.style.background='#f8fafc';"></textarea>
     </div>
   </div>
-  <div class="mobile-action-bar" style="background:#fff;padding:12px 16px;border-top:1px solid #f0f0f0;display:flex;gap:10px;flex-shrink:0;">
-    <button onclick="backToList()" style="flex:1;padding:16px;border-radius:14px;border:1px solid #e2e8f0;background:#fff;font-size:16px;color:#64748b;cursor:pointer;font-weight:500;">キャンセル</button>
-    <button onclick="showFolderModal()" style="flex:2;padding:16px;border-radius:14px;border:none;background:#2563eb;color:#fff;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+
+  <!-- アクションバー -->
+  <div class="mob-ab mobile-action-bar" style="background:#fff;padding:12px 16px;border-top:1px solid #f0f0f0;display:flex;gap:10px;flex-shrink:0;">
+    <button class="btn-cancel" onclick="backToList()" style="flex:1;padding:16px;border-radius:14px;border:1px solid #e2e8f0;background:#fff;font-size:16px;color:#64748b;cursor:pointer;font-weight:500;">キャンセル</button>
+    <button class="btn-save" onclick="showFolderModal()" style="flex:2;padding:16px;border-radius:14px;border:none;background:#2563eb;color:#fff;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
       <i class="fa-solid fa-cloud-arrow-up"></i> 保存
     </button>
   </div>
@@ -255,23 +320,23 @@
 
 <!-- ===== フォルダ名モーダル ===== -->
 <div id="folderModal" style="display:none;position:fixed;inset:0;z-index:60;background:rgba(0,0,0,0.4);align-items:flex-end;justify-content:center;">
-  <div class="slide-up" style="background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:520px;padding:24px;padding-bottom:max(24px, env(safe-area-inset-bottom));">
-    <div style="font-size:18px;font-weight:700;color:#1a1a1a;margin-bottom:4px;">フォルダ名</div>
-    <div style="font-size:14px;color:#8e8e93;margin-bottom:16px;">空欄で自動生成（推奨）</div>
+  <div class="fm-sheet slide-up" style="background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:520px;padding:24px;padding-bottom:max(24px, env(safe-area-inset-bottom));">
+    <div class="fm-title" style="font-size:18px;font-weight:700;color:#1a1a1a;margin-bottom:4px;">保存フォルダ名</div>
+    <div class="fm-hint" style="font-size:14px;color:#8e8e93;margin-bottom:16px;">空欄で自動生成（推奨）</div>
     <input id="folderNameInput" type="text" placeholder="例: 2026_請求書_田中商事"
            style="width:100%;border:1px solid #e2e8f0;border-radius:14px;padding:15px;outline:none;margin-bottom:16px;"
            onfocus="this.style.borderColor='#2563eb'" onblur="this.style.borderColor='#e2e8f0'">
     <div style="display:flex;gap:10px;">
-      <button onclick="closeFolderModal()" style="flex:1;padding:16px;border-radius:14px;border:1px solid #e2e8f0;background:#fff;font-size:16px;color:#64748b;cursor:pointer;">キャンセル</button>
-      <button onclick="saveToDrive()" style="flex:1;padding:16px;border-radius:14px;border:none;background:#2563eb;color:#fff;font-size:16px;font-weight:700;cursor:pointer;">保存実行</button>
+      <button class="fm-cancel" onclick="closeFolderModal()" style="flex:1;padding:16px;border-radius:14px;border:1px solid #e2e8f0;background:#fff;font-size:16px;color:#64748b;cursor:pointer;">キャンセル</button>
+      <button class="fm-save" onclick="saveToDrive()" style="flex:1;padding:16px;border-radius:14px;border:none;background:#2563eb;color:#fff;font-size:16px;font-weight:700;cursor:pointer;">保存実行</button>
     </div>
   </div>
 </div>
 
 <!-- ===== ローディング ===== -->
-<div id="loadingOverlay" style="display:none;position:fixed;inset:0;z-index:70;background:rgba(255,255,255,0.9);flex-direction:column;align-items:center;justify-content:center;gap:14px;">
-  <i class="fa-solid fa-circle-notch spin" style="color:#2563eb;font-size:36px;"></i>
-  <div id="loadingText" style="font-size:15px;color:#475569;">読み込み中...</div>
+<div id="loadingOverlay" style="display:none;position:fixed;inset:0;z-index:70;background:rgba(255,255,255,0.92);flex-direction:column;align-items:center;justify-content:center;gap:14px;">
+  <i class="fa-solid fa-circle-notch spin ld-icon" style="color:#2563eb;font-size:36px;"></i>
+  <div id="loadingText" style="font-size:15px;color:#475569;font-weight:500;">読み込み中...</div>
 </div>
 
 <!-- ===== トースト ===== -->
@@ -281,12 +346,17 @@
 </div>
 
 <script>
-  var currentEmails = [];
-  var currentTab    = 0;
+  var currentEmails  = [];
+  var currentTab     = 0;
   var currentEmailId = null;
   var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth < 768;
 
   if (isMobile) document.documentElement.classList.add('is-mobile');
+
+  // ─── vw変換ヘルパー（isMobile時のみ適用） ───
+  function vs(px) {
+    return isMobile ? (px / 390 * 100).toFixed(1) + 'vw' : px + 'px';
+  }
 
   // ─── アバターカラー ───
   function avatarBg(name) {
@@ -321,7 +391,7 @@
     }, 2000);
   }
 
-  // ─── カードHTML生成 ───
+  // ─── モバイルカード ───
   function mobileCard(email) {
     var initial  = (email.from || '?').charAt(0).toUpperCase();
     var dateStr  = email.date.split(' ')[0].replace(/\d{4}\//, '');
@@ -346,6 +416,7 @@
     );
   }
 
+  // ─── デスクトップカード ───
   function desktopCard(email) {
     var dateStr = email.date.split(' ')[0].replace(/\d{4}\//, '');
     var qsBtn   = currentTab === 0
@@ -374,6 +445,7 @@
     );
   }
 
+  // ─── 一覧レンダリング ───
   function renderEmails(filtered) {
     var container = document.getElementById('emailList');
     container.innerHTML = '';
@@ -381,13 +453,21 @@
     document.getElementById('mailCount').textContent = list.length > 0 ? list.length + '件' : '';
 
     if (list.length === 0) {
-      var emptySize = isMobile ? '12.3vw' : '48px';
-      var emptyText = isMobile ? '4.1vw' : '16px';
-      var emptyPad  = isMobile ? '20vw 0' : '80px 0';
+      var iconSz  = vs(52);
+      var titleSz = vs(17);
+      var bodySz  = vs(14);
+      var padV    = vs(isMobile ? 80 : 80);
+      var mb      = vs(isMobile ? 14 : 14);
+      var mb2     = vs(isMobile ? 10 : 10);
       container.innerHTML =
-        '<div style="text-align:center;padding:' + emptyPad + ';color:#8e8e93;">' +
-        '<i class="fa-solid fa-inbox" style="font-size:' + emptySize + ';display:block;margin-bottom:4vw;color:#d1d5db;"></i>' +
-        '<div style="font-size:' + emptyText + ';">メールがありません</div></div>';
+        '<div style="text-align:center;padding:' + padV + ' ' + vs(24) + ';color:#8e8e93;">' +
+          '<i class="fa-solid fa-inbox" style="font-size:' + iconSz + ';display:block;margin-bottom:' + mb + ';color:#d1d5db;"></i>' +
+          '<div style="font-size:' + titleSz + ';font-weight:600;color:#475569;margin-bottom:' + mb2 + ';">' +
+            (currentTab === 1 ? '処理済みメールがありません' : 'メールがありません') +
+          '</div>' +
+          (currentTab === 0 ?
+            '<div style="font-size:' + bodySz + ';color:#94a3b8;line-height:1.8;">GmailのメールにToDriveラベルを付けると<br>ここに表示されます</div>' : '') +
+        '</div>';
       return;
     }
 
@@ -446,31 +526,41 @@
     if (d.attachments.length > 0) {
       attachArea.style.display = 'block';
       d.attachments.forEach(function(a) {
-        attachList.innerHTML += '<div style="display:flex;align-items:center;gap:10px;background:#f8fafc;border-radius:10px;padding:10px 12px;"><i class="fa-solid fa-file" style="color:#94a3b8;"></i><div><div style="font-size:13px;color:#374151;">' + escHtml(a.name) + '</div><div style="font-size:11px;color:#94a3b8;">' + a.size + '</div></div></div>';
+        attachList.innerHTML += '<div style="display:flex;align-items:center;gap:10px;background:#f8fafc;border-radius:10px;padding:10px 12px;">' +
+          '<i class="fa-solid fa-file" style="color:#94a3b8;"></i>' +
+          '<div><div style="font-size:13px;color:#374151;">' + escHtml(a.name) + '</div>' +
+          '<div style="font-size:11px;color:#94a3b8;">' + a.size + '</div></div></div>';
       });
     } else { attachArea.style.display = 'none'; }
     document.getElementById('memoAreaDesktop').value = '';
   }
 
+  // ─── モバイル詳細レンダリング（vw対応） ───
   function renderDetailMobile(d) {
     document.getElementById('detailSubjectMobile').textContent = d.subject;
+
     var html =
-      '<div style="font-size:14px;color:#8e8e93;margin-bottom:16px;line-height:1.7;">' +
-        '<div style="font-weight:600;color:#374151;">' + escHtml(d.from) + '</div>' +
-        '<div>' + escHtml(d.date) + '</div>' +
+      '<div class="dv-meta" style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid #f0f0f0;">' +
+        '<div class="dv-from" style="font-size:15px;font-weight:700;color:#1a1a1a;margin-bottom:' + vs(4) + ';">' + escHtml(d.from) + '</div>' +
+        '<div class="dv-date-str" style="font-size:13px;color:#8e8e93;">' + escHtml(d.date) + '</div>' +
       '</div>' +
-      '<div style="font-size:16px;color:#1a1a1a;line-height:1.8;">' + d.body + '</div>';
+      '<div class="dv-body" style="font-size:' + vs(16) + ';color:#1a1a1a;line-height:1.9;word-break:break-word;">' + d.body + '</div>';
+
     if (d.attachments.length > 0) {
-      html += '<div style="margin-top:20px;border-top:1px solid #f0f0f0;padding-top:16px;">' +
-        '<div style="font-size:13px;font-weight:600;color:#8e8e93;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.06em;">添付ファイル</div>';
+      html += '<div class="dv-attach-hdr" style="margin-top:20px;border-top:1px solid #f0f0f0;padding-top:16px;margin-bottom:12px;">' +
+        '<div class="dv-attach-title-text" style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#94a3b8;">添付ファイル</div>' +
+        '</div>';
       d.attachments.forEach(function(a) {
-        html += '<div style="display:flex;align-items:center;gap:12px;background:#f8fafc;border-radius:14px;padding:14px;margin-bottom:8px;">' +
-          '<i class="fa-solid fa-file" style="color:#8e8e93;font-size:20px;"></i>' +
-          '<div><div style="font-size:15px;color:#1a1a1a;">' + escHtml(a.name) + '</div>' +
-          '<div style="font-size:13px;color:#8e8e93;">' + a.size + '</div></div></div>';
+        html += '<div class="dv-attach-item" style="display:flex;align-items:center;gap:12px;background:#f8fafc;border-radius:14px;padding:14px;margin-bottom:8px;">' +
+          '<i class="fa-solid fa-file dv-attach-icon" style="color:#8e8e93;font-size:' + vs(20) + ';"></i>' +
+          '<div>' +
+            '<div class="dv-attach-name" style="font-size:' + vs(15) + ';color:#1a1a1a;">' + escHtml(a.name) + '</div>' +
+            '<div class="dv-attach-size" style="font-size:' + vs(13) + ';color:#8e8e93;">' + a.size + '</div>' +
+          '</div>' +
+        '</div>';
       });
-      html += '</div>';
     }
+
     document.getElementById('detailContentMobile').innerHTML = html;
     document.getElementById('memoAreaMobile').value = '';
     document.getElementById('detailViewMobile').style.display = 'flex';
@@ -499,7 +589,10 @@
     var customName = document.getElementById('folderNameInput').value.trim();
     showLoading('Driveに保存中...');
     google.script.run
-      .withSuccessHandler(function(r) { hideLoading(); if (r.success) { showToast(r.folderName, r.folderUrl, false); backToList(); loadEmails(); } })
+      .withSuccessHandler(function(r) {
+        hideLoading();
+        if (r.success) { showToast(r.folderName, r.folderUrl, false); backToList(); loadEmails(); }
+      })
       .withFailureHandler(function(e) { hideLoading(); showToast('保存エラー: ' + e.message, '', true); })
       .processToDrive(currentEmailId, memo, customName || null);
   }
