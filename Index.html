@@ -84,7 +84,15 @@
     html.is-mobile #bottomNav { display: flex !important; }
     html.is-mobile .mobile-only { display: flex !important; }
     html.is-mobile #emailList { padding-bottom: calc(15vw + env(safe-area-inset-bottom)) !important; }
-    html.is-mobile #toast { bottom: calc(16vw + env(safe-area-inset-bottom)) !important; }
+    html.is-mobile #toast {
+      bottom: calc(16vw + env(safe-area-inset-bottom)) !important;
+      font-size: 3.8vw !important;
+      padding: 3.6vw 5.6vw !important;
+      border-radius: 4vw !important;
+      gap: 2.6vw !important;
+      max-width: 88vw !important;
+    }
+    html.is-mobile #toastIcon { font-size: 4.6vw !important; }
 
     /* ─ ヘッダー vw化 ─ */
     html.is-mobile header { height: 14vw !important; padding: 0 4vw !important; }
@@ -373,10 +381,13 @@
     document.getElementById('mailCount').textContent = list.length > 0 ? list.length + '件' : '';
 
     if (list.length === 0) {
+      var emptySize = isMobile ? '12.3vw' : '48px';
+      var emptyText = isMobile ? '4.1vw' : '16px';
+      var emptyPad  = isMobile ? '20vw 0' : '80px 0';
       container.innerHTML =
-        '<div style="text-align:center;padding:80px 0;color:#8e8e93;">' +
-        '<i class="fa-solid fa-inbox" style="font-size:48px;display:block;margin-bottom:16px;color:#d1d5db;"></i>' +
-        '<div style="font-size:16px;">メールがありません</div></div>';
+        '<div style="text-align:center;padding:' + emptyPad + ';color:#8e8e93;">' +
+        '<i class="fa-solid fa-inbox" style="font-size:' + emptySize + ';display:block;margin-bottom:4vw;color:#d1d5db;"></i>' +
+        '<div style="font-size:' + emptyText + ';">メールがありません</div></div>';
       return;
     }
 
