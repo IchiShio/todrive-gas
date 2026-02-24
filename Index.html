@@ -9,44 +9,22 @@
   <meta name="theme-color" content="#2563eb">
   <link rel="manifest" href="?manifest=1">
   <title>ToDrive</title>
-  <!-- モバイル判定をCSSより先に実行してフラッシュ防止 -->
+  <!-- モバイル判定をCSSより先に実行 -->
   <script>
     if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth < 768) {
       document.documentElement.classList.add('is-mobile');
     }
   </script>
-  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
     * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
-    html { height: 100%; margin: 0; padding: 0; }
-    body { height: 100dvh; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f1f5f9; }
-
-    /* iOSズーム抑制 */
+    html, body { height: 100%; margin: 0; padding: 0; }
+    body { height: 100dvh; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f1f5f9; }
     input, textarea { font-size: 16px; }
 
-    /* ─── カード共通 ─── */
-    .mail-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 14px; margin-bottom: 6px; cursor: pointer; transition: background 0.12s, transform 0.12s; }
-    .mail-card:active { transform: scale(0.99); background: #f1f5f9; }
-    .mail-card.selected { background: #eff6ff; border-color: #bfdbfe; }
-
-    /* ─── カード内要素（デスクトップ基準） ─── */
-    .card-avatar  { display: none; }
-    .card-icon    { width: 36px; height: 36px; background: #eff6ff; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .card-subject { font-size: 14px; font-weight: 600; color: #0f172a; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .card-sender  { font-size: 12px; color: #94a3b8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .card-date    { font-size: 11px; color: #94a3b8; flex-shrink: 0; }
-    .card-snippet { font-size: 12px; color: #64748b; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.5; margin-top: 6px; }
-    .card-attach  { display: inline-flex; align-items: center; gap: 5px; background: #eff6ff; color: #3b82f6; font-size: 11px; padding: 3px 10px; border-radius: 20px; margin-top: 8px; }
-    .quick-save   { width: 32px; height: 32px; border-radius: 8px; border: none; background: #eff6ff; color: #3b82f6; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-
-    /* ─── タブ ─── */
-    .tab-btn { transition: all 0.18s; color: #94a3b8; font-weight: 500; }
-    .tab-btn.active { background: #2563eb; color: #fff; }
-
     /* ─── アニメーション ─── */
-    @keyframes fadeSlide { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-    .fade-in { animation: fadeSlide 0.2s ease forwards; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .fade-in { animation: fadeIn 0.18s ease forwards; }
     @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     .slide-up { animation: slideUp 0.28s ease forwards; }
     @keyframes spin { to { transform: rotate(360deg); } }
@@ -57,108 +35,112 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
 
+    /* ─── タブ ─── */
+    .tab-btn { transition: all 0.18s; color: #94a3b8; font-weight: 500; }
+    .tab-btn.active { background: #2563eb; color: #fff; }
+
+    /* ─── デスクトップ：コンパクトカード ─── */
+    .mail-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 14px; margin-bottom: 6px; cursor: pointer; transition: background 0.12s; }
+    .mail-card:active { background: #f1f5f9; }
+    .mail-card.selected { background: #eff6ff; border-color: #bfdbfe; }
+    .dc-subject  { font-size: 14px; font-weight: 600; color: #0f172a; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .dc-sender   { font-size: 12px; color: #94a3b8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .dc-snippet  { font-size: 12px; color: #64748b; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.5; margin-top: 6px; }
+    .dc-date     { font-size: 11px; color: #94a3b8; flex-shrink: 0; }
+    .dc-attach   { display: inline-flex; align-items: center; gap: 4px; background: #eff6ff; color: #3b82f6; font-size: 11px; padding: 2px 8px; border-radius: 20px; margin-top: 6px; }
+    .dc-qs       { width: 30px; height: 30px; border-radius: 8px; border: none; background: #eff6ff; color: #3b82f6; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+    /* ─── モバイル：Gmail風ロウ ─── */
+    .mail-row { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: #fff; border-bottom: 1px solid #f0f0f0; cursor: pointer; min-height: 76px; }
+    .mail-row:active { background: #f5f8ff; }
+    .mail-row.selected { background: #eff6ff; }
+    .mr-avatar  { width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 19px; font-weight: 700; color: #fff; }
+    .mr-body    { flex: 1; min-width: 0; }
+    .mr-top     { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 2px; }
+    .mr-sender  { font-size: 17px; font-weight: 700; color: #1a1a1a; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .mr-date    { font-size: 13px; color: #8e8e93; flex-shrink: 0; }
+    .mr-subject { font-size: 15px; color: #1a1a1a; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 2px; }
+    .mr-snippet { font-size: 14px; color: #8e8e93; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .mr-attach  { display: inline-flex; align-items: center; gap: 4px; color: #3b82f6; font-size: 13px; margin-top: 3px; }
+    .mr-qs      { width: 44px; height: 44px; border-radius: 50%; border: none; background: #f0f4ff; color: #3b82f6; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
     /* ─── 詳細パネル ─── */
     #detailBody img { max-width: 100%; height: auto; }
     #detailBody a { color: #2563eb; text-decoration: underline; }
 
     /* ─── Safe Area ─── */
     header { padding-top: env(safe-area-inset-top); }
-    .mobile-action-bar { padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+    .mobile-action-bar { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
 
-    /* ══════════════════════════════════════
-       モバイル専用スタイル（JS で .is-mobile を html に付与）
-       ※ GAS iframe内ではメディアクエリが効かないためクラス方式を使用
-    ══════════════════════════════════════ */
-
-    /* ── レイアウト ── */
+    /* ══════════════════════════════════
+       モバイル専用（.is-mobile クラス）
+    ══════════════════════════════════ */
     .is-mobile #detailPanelDesktop { display: none !important; }
-    .is-mobile #listPanel { max-width: 100% !important; min-width: 0 !important; border-right: none !important; }
+    .is-mobile #listPanel { max-width: 100% !important; min-width: 0 !important; border-right: none !important; background: #fff !important; }
+    .is-mobile #emailList { padding: 0 !important; }
     .is-mobile .header-tabs { display: none !important; }
     .is-mobile #bottomNav { display: flex !important; }
-    .is-mobile #emailList { padding-bottom: calc(76px + env(safe-area-inset-bottom)) !important; }
-
-    /* ── カード ── */
-    .is-mobile .mail-card { padding: 16px; margin-bottom: 10px; border-radius: 18px; border-color: #f1f5f9; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
-    .is-mobile .card-avatar { display: flex !important; width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; color: #fff; }
-    .is-mobile .card-icon   { display: none !important; }
-    .is-mobile .card-subject { font-size: 16px !important; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    .is-mobile .card-sender  { font-size: 14px !important; }
-    .is-mobile .card-date    { font-size: 13px !important; }
-    .is-mobile .card-snippet { font-size: 14px !important; margin-top: 8px; }
-    .is-mobile .card-attach  { font-size: 13px !important; margin-top: 10px; padding: 5px 12px; }
-    .is-mobile .quick-save   { width: 48px !important; height: 48px !important; font-size: 22px !important; border-radius: 14px !important; }
-
-    /* ── トーストをボトムナビの上に ── */
-    .is-mobile #toast { bottom: calc(84px + env(safe-area-inset-bottom)) !important; }
-
-    /* ── 検索 ── */
-    .is-mobile #searchInput { padding: 13px 14px 13px 40px !important; border-radius: 14px !important; }
-    .is-mobile #mailCount { font-size: 13px !important; padding: 4px 16px 10px !important; }
+    .is-mobile .mobile-only { display: flex !important; }
+    .is-mobile #emailList { padding-bottom: calc(80px + env(safe-area-inset-bottom)) !important; }
+    .is-mobile #toast { bottom: calc(90px + env(safe-area-inset-bottom)) !important; }
+    .is-mobile #searchInput { font-size: 16px !important; padding: 13px 14px 13px 40px !important; border-radius: 14px !important; }
+    .is-mobile #mailCount { font-size: 14px !important; color: #8e8e93 !important; padding: 4px 16px 8px !important; }
+    .is-mobile #listSearchWrap { padding: 12px 16px 8px !important; }
   </style>
 </head>
 <body>
 
-<!-- ===== 全体レイアウト ===== -->
-<div style="display:flex; flex-direction:column; height:100dvh; overflow:hidden; background:#fff;">
+<div style="display:flex;flex-direction:column;height:100dvh;overflow:hidden;background:#fff;">
 
-  <!-- ── グローバルヘッダー ── -->
-  <header style="display:flex; align-items:center; justify-content:space-between; padding:0 16px; height:56px; border-bottom:1px solid #e2e8f0; background:#fff; flex-shrink:0; z-index:40;">
-    <div style="display:flex; align-items:center; gap:10px;">
+  <!-- ── ヘッダー ── -->
+  <header style="display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:56px;border-bottom:1px solid #e2e8f0;background:#fff;flex-shrink:0;z-index:40;">
+    <div style="display:flex;align-items:center;gap:10px;">
       <div style="width:34px;height:34px;background:#2563eb;border-radius:10px;display:flex;align-items:center;justify-content:center;">
         <i class="fa-solid fa-cloud-arrow-up" style="color:#fff;font-size:15px;"></i>
       </div>
       <span style="font-size:18px;font-weight:700;color:#0f172a;letter-spacing:-0.3px;">ToDrive</span>
     </div>
-    <!-- デスクトップ：ヘッダータブ -->
+    <!-- デスクトップタブ -->
     <div class="header-tabs" style="display:flex;align-items:center;gap:6px;">
-      <button onclick="switchTab(0)" id="tab0" class="tab-btn active" style="padding:8px 18px;border-radius:20px;border:none;font-size:13px;cursor:pointer;min-height:36px;">未処理</button>
-      <button onclick="switchTab(1)" id="tab1" class="tab-btn" style="padding:8px 18px;border-radius:20px;border:none;font-size:13px;cursor:pointer;background:transparent;min-height:36px;">履歴</button>
-      <button onclick="refreshEmails()" id="refreshBtn" title="更新" style="width:36px;height:36px;border-radius:50%;border:1px solid #e2e8f0;background:#fff;color:#64748b;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+      <button onclick="switchTab(0)" id="tab0" class="tab-btn active" style="padding:8px 18px;border-radius:20px;border:none;font-size:13px;cursor:pointer;">未処理</button>
+      <button onclick="switchTab(1)" id="tab1" class="tab-btn" style="padding:8px 18px;border-radius:20px;border:none;font-size:13px;cursor:pointer;background:transparent;">履歴</button>
+      <button onclick="refreshEmails()" id="refreshBtn" style="width:36px;height:36px;border-radius:50%;border:1px solid #e2e8f0;background:#fff;color:#64748b;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;">
         <i class="fa-solid fa-rotate-right"></i>
       </button>
     </div>
-    <!-- モバイル：更新ボタンのみ -->
-    <button onclick="refreshEmails()" class="mobile-refresh" style="display:none;width:40px;height:40px;border-radius:50%;border:1px solid #e2e8f0;background:#fff;color:#64748b;font-size:16px;cursor:pointer;align-items:center;justify-content:center;">
+    <!-- モバイル更新ボタン -->
+    <button onclick="refreshEmails()" class="mobile-only" style="display:none;width:42px;height:42px;border-radius:50%;border:none;background:none;color:#2563eb;font-size:20px;cursor:pointer;align-items:center;justify-content:center;">
       <i class="fa-solid fa-rotate-right"></i>
     </button>
   </header>
 
-  <!-- ── メインエリア ── -->
-  <div style="display:flex; flex:1; overflow:hidden;">
+  <div style="display:flex;flex:1;overflow:hidden;">
 
-    <!-- ── 左：メール一覧パネル ── -->
+    <!-- ── 一覧パネル ── -->
     <div id="listPanel" style="width:100%;max-width:420px;min-width:280px;border-right:1px solid #e2e8f0;display:flex;flex-direction:column;overflow:hidden;background:#f8fafc;">
 
-      <!-- 検索 -->
-      <div style="padding:12px 12px 6px;flex-shrink:0;">
+      <div id="listSearchWrap" style="padding:12px 12px 6px;flex-shrink:0;">
         <div style="position:relative;">
-          <i class="fa-solid fa-magnifying-glass" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:13px;"></i>
-          <input id="searchInput" type="search" placeholder="件名・送信者で検索..."
+          <i class="fa-solid fa-magnifying-glass" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:14px;"></i>
+          <input id="searchInput" type="search" placeholder="検索..."
                  oninput="filterEmails()"
-                 style="width:100%;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:9px 12px 9px 34px;outline:none;transition:border-color 0.15s;"
+                 style="width:100%;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px 10px 36px;outline:none;"
                  onfocus="this.style.borderColor='#2563eb'" onblur="this.style.borderColor='#e2e8f0'">
         </div>
       </div>
 
-      <!-- カウント -->
       <div id="mailCount" style="padding:0 14px 4px;font-size:11px;color:#94a3b8;flex-shrink:0;"></div>
-
-      <!-- 一覧 -->
       <div id="emailList" style="flex:1;overflow-y:auto;padding:0 10px 12px;"></div>
     </div>
 
-    <!-- ── 右：詳細パネル（デスクトップ） ── -->
+    <!-- ── 詳細パネル（デスクトップ） ── -->
     <div id="detailPanelDesktop" style="flex:1;display:flex;flex-direction:column;overflow:hidden;background:#fff;">
-
-      <!-- 空状態 -->
-      <div id="emptyState" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#cbd5e1;gap:12px;">
+      <div id="emptyState" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;">
         <div style="width:64px;height:64px;background:#f1f5f9;border-radius:20px;display:flex;align-items:center;justify-content:center;">
           <i class="fa-solid fa-envelope-open" style="font-size:28px;color:#cbd5e1;"></i>
         </div>
         <div style="font-size:14px;color:#94a3b8;">メールを選択してください</div>
       </div>
-
-      <!-- 詳細コンテンツ（デスクトップ） -->
       <div id="detailAreaDesktop" style="display:none;flex:1;flex-direction:column;overflow:hidden;">
         <div style="padding:16px 24px 12px;border-bottom:1px solid #f1f5f9;flex-shrink:0;">
           <div id="detailSubjectDesktop" style="font-size:17px;font-weight:700;color:#0f172a;line-height:1.4;margin-bottom:6px;"></div>
@@ -175,12 +157,12 @@
           <div style="padding:20px 24px;">
             <div style="font-size:12px;font-weight:600;color:#475569;margin-bottom:8px;">処理指示メモ</div>
             <textarea id="memoAreaDesktop" rows="5"
-              style="width:100%;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px;resize:vertical;outline:none;background:#f8fafc;line-height:1.6;transition:border-color 0.15s;"
+              style="width:100%;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px;resize:vertical;outline:none;background:#f8fafc;line-height:1.6;"
               placeholder="例：請求書をfreeeに入力後、経理にSlack連絡"
               onfocus="this.style.borderColor='#2563eb';this.style.background='#fff';"
               onblur="this.style.borderColor='#e2e8f0';this.style.background='#f8fafc';"></textarea>
             <div style="margin-top:12px;display:flex;gap:10px;">
-              <button onclick="clearDetail()" style="flex:1;padding:12px;border-radius:12px;border:1px solid #e2e8f0;background:#fff;font-size:13px;font-weight:500;color:#64748b;cursor:pointer;">キャンセル</button>
+              <button onclick="clearDetail()" style="flex:1;padding:12px;border-radius:12px;border:1px solid #e2e8f0;background:#fff;font-size:13px;color:#64748b;cursor:pointer;">キャンセル</button>
               <button onclick="showFolderModal()" style="flex:2;padding:12px;border-radius:12px;border:none;background:#2563eb;color:#fff;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
                 <i class="fa-solid fa-cloud-arrow-up"></i> Driveに保存
               </button>
@@ -192,44 +174,43 @@
   </div>
 </div>
 
-<!-- ===== ボトムナビゲーション（モバイルのみ） ===== -->
+<!-- ===== ボトムナビ（モバイル） ===== -->
 <div id="bottomNav" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:45;background:#fff;border-top:1px solid #e2e8f0;">
   <div style="display:flex;padding-bottom:env(safe-area-inset-bottom);">
-    <button onclick="switchTab(0)" id="btab0" style="flex:1;padding:12px 0 10px;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;color:#2563eb;">
-      <i class="fa-solid fa-inbox" style="font-size:22px;"></i>
-      <span style="font-size:11px;font-weight:600;">未処理</span>
+    <button onclick="switchTab(0)" id="btab0" style="flex:1;padding:10px 0 8px;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;color:#2563eb;">
+      <i class="fa-solid fa-inbox" style="font-size:24px;"></i>
+      <span style="font-size:12px;font-weight:600;">未処理</span>
     </button>
-    <button onclick="switchTab(1)" id="btab1" style="flex:1;padding:12px 0 10px;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;color:#94a3b8;">
-      <i class="fa-solid fa-clock-rotate-left" style="font-size:22px;"></i>
-      <span style="font-size:11px;font-weight:600;">履歴</span>
+    <button onclick="switchTab(1)" id="btab1" style="flex:1;padding:10px 0 8px;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;color:#8e8e93;">
+      <i class="fa-solid fa-clock-rotate-left" style="font-size:24px;"></i>
+      <span style="font-size:12px;font-weight:600;">履歴</span>
     </button>
   </div>
 </div>
 
-<!-- ===== モバイル：フルスクリーン詳細 ===== -->
+<!-- ===== モバイル詳細 ===== -->
 <div id="detailViewMobile" style="display:none;position:fixed;inset:0;background:#fff;z-index:50;flex-direction:column;">
-  <!-- ヘッダー -->
-  <div style="padding:0 16px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:8px;flex-shrink:0;height:56px;padding-top:env(safe-area-inset-top);">
-    <button onclick="backToList()" style="color:#2563eb;background:none;border:none;font-size:20px;cursor:pointer;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+  <div style="display:flex;align-items:center;gap:4px;padding:0 8px;height:56px;padding-top:env(safe-area-inset-top);border-bottom:1px solid #f0f0f0;flex-shrink:0;">
+    <button onclick="backToList()" style="color:#2563eb;background:none;border:none;font-size:22px;cursor:pointer;min-width:44px;height:44px;display:flex;align-items:center;justify-content:center;">
       <i class="fa-solid fa-chevron-left"></i>
     </button>
-    <div id="detailSubjectMobile" style="flex:1;font-size:15px;font-weight:600;color:#0f172a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></div>
+    <div id="detailSubjectMobile" style="flex:1;font-size:16px;font-weight:600;color:#1a1a1a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></div>
   </div>
-  <!-- スクロールコンテンツ -->
   <div style="flex:1;overflow-y:auto;">
     <div id="detailContentMobile" style="padding:16px;"></div>
-    <div style="padding:0 16px 16px;border-top:1px solid #f1f5f9;">
-      <div style="font-size:13px;font-weight:600;color:#475569;margin-bottom:10px;padding-top:16px;">処理指示メモ</div>
+    <div style="padding:0 16px 16px;border-top:1px solid #f0f0f0;">
+      <div style="font-size:14px;font-weight:600;color:#374151;margin-bottom:10px;padding-top:16px;">処理指示メモ</div>
       <textarea id="memoAreaMobile" rows="4"
         style="width:100%;border:1px solid #e2e8f0;border-radius:14px;padding:14px;resize:none;outline:none;background:#f8fafc;line-height:1.6;"
-        placeholder="例：請求書をfreeeに入力後、経理にSlack連絡"></textarea>
+        placeholder="例：請求書をfreeeに入力後、経理にSlack連絡"
+        onfocus="this.style.borderColor='#2563eb';this.style.background='#fff';"
+        onblur="this.style.borderColor='#e2e8f0';this.style.background='#f8fafc';"></textarea>
     </div>
   </div>
-  <!-- 固定アクションバー -->
-  <div class="mobile-action-bar" style="background:#fff;padding:12px 16px;border-top:1px solid #f1f5f9;display:flex;gap:10px;flex-shrink:0;">
-    <button onclick="backToList()" style="flex:1;padding:16px;border-radius:14px;border:1px solid #e2e8f0;background:#fff;font-size:15px;color:#64748b;cursor:pointer;font-weight:500;">キャンセル</button>
-    <button onclick="showFolderModal()" style="flex:2;padding:16px;border-radius:14px;border:none;background:#2563eb;color:#fff;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
-      <i class="fa-solid fa-cloud-arrow-up"></i> Driveに保存
+  <div class="mobile-action-bar" style="background:#fff;padding:12px 16px;border-top:1px solid #f0f0f0;display:flex;gap:10px;flex-shrink:0;">
+    <button onclick="backToList()" style="flex:1;padding:16px;border-radius:14px;border:1px solid #e2e8f0;background:#fff;font-size:16px;color:#64748b;cursor:pointer;font-weight:500;">キャンセル</button>
+    <button onclick="showFolderModal()" style="flex:2;padding:16px;border-radius:14px;border:none;background:#2563eb;color:#fff;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+      <i class="fa-solid fa-cloud-arrow-up"></i> 保存
     </button>
   </div>
 </div>
@@ -237,147 +218,144 @@
 <!-- ===== フォルダ名モーダル ===== -->
 <div id="folderModal" style="display:none;position:fixed;inset:0;z-index:60;background:rgba(0,0,0,0.4);align-items:flex-end;justify-content:center;">
   <div class="slide-up" style="background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:520px;padding:24px;padding-bottom:max(24px, env(safe-area-inset-bottom));">
-    <div style="font-size:17px;font-weight:700;color:#0f172a;margin-bottom:4px;">フォルダ名</div>
-    <div style="font-size:13px;color:#94a3b8;margin-bottom:14px;">空欄で自動生成（推奨）</div>
+    <div style="font-size:18px;font-weight:700;color:#1a1a1a;margin-bottom:4px;">フォルダ名</div>
+    <div style="font-size:14px;color:#8e8e93;margin-bottom:16px;">空欄で自動生成（推奨）</div>
     <input id="folderNameInput" type="text" placeholder="例: 2026_請求書_田中商事"
-           style="width:100%;border:1px solid #e2e8f0;border-radius:14px;padding:14px;outline:none;margin-bottom:16px;"
+           style="width:100%;border:1px solid #e2e8f0;border-radius:14px;padding:15px;outline:none;margin-bottom:16px;"
            onfocus="this.style.borderColor='#2563eb'" onblur="this.style.borderColor='#e2e8f0'">
     <div style="display:flex;gap:10px;">
-      <button onclick="closeFolderModal()" style="flex:1;padding:15px;border-radius:14px;border:1px solid #e2e8f0;background:#fff;font-size:15px;color:#64748b;cursor:pointer;">キャンセル</button>
-      <button onclick="saveToDrive()" style="flex:1;padding:15px;border-radius:14px;border:none;background:#2563eb;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">保存実行</button>
+      <button onclick="closeFolderModal()" style="flex:1;padding:16px;border-radius:14px;border:1px solid #e2e8f0;background:#fff;font-size:16px;color:#64748b;cursor:pointer;">キャンセル</button>
+      <button onclick="saveToDrive()" style="flex:1;padding:16px;border-radius:14px;border:none;background:#2563eb;color:#fff;font-size:16px;font-weight:700;cursor:pointer;">保存実行</button>
     </div>
   </div>
 </div>
 
 <!-- ===== ローディング ===== -->
-<div id="loadingOverlay" style="display:none;position:fixed;inset:0;z-index:70;background:rgba(255,255,255,0.88);flex-direction:column;align-items:center;justify-content:center;gap:14px;">
+<div id="loadingOverlay" style="display:none;position:fixed;inset:0;z-index:70;background:rgba(255,255,255,0.9);flex-direction:column;align-items:center;justify-content:center;gap:14px;">
   <i class="fa-solid fa-circle-notch spin" style="color:#2563eb;font-size:36px;"></i>
-  <div id="loadingText" style="font-size:14px;color:#475569;">読み込み中...</div>
+  <div id="loadingText" style="font-size:15px;color:#475569;">読み込み中...</div>
 </div>
 
 <!-- ===== トースト ===== -->
-<div id="toast" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:80;background:#0f172a;color:#fff;padding:12px 20px;border-radius:16px;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,0.2);align-items:center;gap:8px;white-space:nowrap;max-width:90vw;" class="slide-up">
-  <i id="toastIcon" class="fa-solid fa-check-circle" style="color:#4ade80;font-size:16px;"></i>
+<div id="toast" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:80;background:#1a1a1a;color:#fff;padding:14px 22px;border-radius:16px;font-size:15px;box-shadow:0 8px 24px rgba(0,0,0,0.2);align-items:center;gap:10px;white-space:nowrap;max-width:90vw;" class="slide-up">
+  <i id="toastIcon" class="fa-solid fa-check-circle" style="color:#4ade80;font-size:18px;"></i>
   <span id="toastText" style="overflow:hidden;text-overflow:ellipsis;"></span>
 </div>
 
 <script>
   var currentEmails = [];
-  var currentTab = 0;
+  var currentTab    = 0;
   var currentEmailId = null;
-  // GAS iframe内ではinnerWidthが信頼できないためuserAgentを優先
   var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth < 768;
 
-  // is-mobileクラスをhtml要素に付与（headのscriptと二重保険）
   if (isMobile) document.documentElement.classList.add('is-mobile');
-
-  // モバイル更新ボタンを表示
-  if (isMobile) {
-    var mobileRefresh = document.querySelector('.mobile-refresh');
-    if (mobileRefresh) mobileRefresh.style.display = 'flex';
-  }
 
   // ─── アバターカラー ───
   function avatarBg(name) {
-    var colors = ['#3b82f6','#8b5cf6','#ef4444','#f97316','#22c55e','#06b6d4','#ec4899','#eab308'];
+    var c = ['#3b82f6','#8b5cf6','#ef4444','#f97316','#22c55e','#06b6d4','#ec4899','#f59e0b'];
     var h = 0;
-    for (var i = 0; i < name.length; i++) h = (h + name.charCodeAt(i)) % colors.length;
-    return colors[h];
+    for (var i = 0; i < (name||'').length; i++) h = (h + name.charCodeAt(i)) % c.length;
+    return c[h];
   }
 
   // ─── ローディング ───
-  function showLoading(text) {
-    document.getElementById('loadingText').textContent = text || '読み込み中...';
+  function showLoading(t) {
+    document.getElementById('loadingText').textContent = t || '読み込み中...';
     document.getElementById('loadingOverlay').style.display = 'flex';
   }
-  function hideLoading() {
-    document.getElementById('loadingOverlay').style.display = 'none';
-  }
+  function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
 
-  // ─── メール一覧 ───
+  // ─── 一覧取得 ───
   function loadEmails(forceRefresh) {
     showLoading('メールを取得中...');
     clearDetail();
     google.script.run
-      .withSuccessHandler(function(emails) {
-        hideLoading();
-        currentEmails = emails;
-        renderEmails(null);
-      })
-      .withFailureHandler(function(err) {
-        hideLoading();
-        showToast('エラー: ' + err.message, '', true);
-      })
+      .withSuccessHandler(function(emails) { hideLoading(); currentEmails = emails; renderEmails(null); })
+      .withFailureHandler(function(err)    { hideLoading(); showToast('エラー: ' + err.message, '', true); })
       .getEmails(currentTab === 1, !!forceRefresh);
   }
 
   function refreshEmails() {
-    var btns = document.querySelectorAll('#refreshBtn, .mobile-refresh');
-    btns.forEach(function(b) {
-      b.style.pointerEvents = 'none';
-      b.querySelector('i').classList.add('spin');
-    });
+    document.querySelectorAll('#refreshBtn i, .mobile-only i').forEach(function(i) { i.classList.add('spin'); });
     loadEmails(true);
     setTimeout(function() {
-      btns.forEach(function(b) {
-        b.style.pointerEvents = '';
-        b.querySelector('i').classList.remove('spin');
-      });
+      document.querySelectorAll('#refreshBtn i, .mobile-only i').forEach(function(i) { i.classList.remove('spin'); });
     }, 2000);
+  }
+
+  // ─── カードHTML生成 ───
+  function mobileCard(email) {
+    var initial  = (email.from || '?').charAt(0).toUpperCase();
+    var dateStr  = email.date.split(' ')[0].replace(/\d{4}\//, '');
+    var qsBtn    = currentTab === 0
+      ? '<button class="mr-qs" onclick="event.stopPropagation();quickSave(\'' + email.id + '\')" title="クイック保存">⚡</button>'
+      : '';
+    var attach   = email.attachmentCount > 0
+      ? '<div class="mr-attach"><i class="fa-solid fa-paperclip" style="font-size:12px;"></i>' + email.attachmentCount + '件の添付</div>'
+      : '';
+    return (
+      '<div class="mr-avatar" style="background:' + avatarBg(email.from) + ';">' + escHtml(initial) + '</div>' +
+      '<div class="mr-body">' +
+        '<div class="mr-top">' +
+          '<span class="mr-sender">' + escHtml(email.from) + '</span>' +
+          '<span class="mr-date">'   + dateStr + '</span>' +
+        '</div>' +
+        '<div class="mr-subject">' + escHtml(email.subject) + '</div>' +
+        '<div class="mr-snippet">'  + escHtml(email.snippet) + '</div>' +
+        attach +
+      '</div>' +
+      qsBtn
+    );
+  }
+
+  function desktopCard(email) {
+    var dateStr = email.date.split(' ')[0].replace(/\d{4}\//, '');
+    var qsBtn   = currentTab === 0
+      ? '<button class="dc-qs" onclick="event.stopPropagation();quickSave(\'' + email.id + '\')" title="クイック保存">⚡</button>'
+      : '';
+    var attach  = email.attachmentCount > 0
+      ? '<div class="dc-attach"><i class="fa-solid fa-paperclip" style="font-size:10px;"></i>' + email.attachmentCount + '件の添付</div>'
+      : '';
+    return (
+      '<div style="display:flex;gap:10px;align-items:flex-start;">' +
+        '<div style="width:36px;height:36px;background:#eff6ff;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">' +
+          '<i class="fa-solid fa-envelope" style="color:#3b82f6;font-size:14px;"></i>' +
+        '</div>' +
+        '<div style="flex:1;min-width:0;">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:2px;">' +
+            '<div class="dc-sender">' + escHtml(email.from) + '</div>' +
+            '<div style="display:flex;align-items:center;gap:6px;">' +
+              '<span class="dc-date">' + dateStr + '</span>' + qsBtn +
+            '</div>' +
+          '</div>' +
+          '<div class="dc-subject">' + escHtml(email.subject) + '</div>' +
+          '<div class="dc-snippet">' + escHtml(email.snippet) + '</div>' +
+          attach +
+        '</div>' +
+      '</div>'
+    );
   }
 
   function renderEmails(filtered) {
     var container = document.getElementById('emailList');
     container.innerHTML = '';
     var list = filtered !== null ? filtered : currentEmails;
-    var countEl = document.getElementById('mailCount');
-    countEl.textContent = list.length > 0 ? list.length + '件' : '';
+    document.getElementById('mailCount').textContent = list.length > 0 ? list.length + '件' : '';
 
     if (list.length === 0) {
       container.innerHTML =
-        '<div style="text-align:center;padding:60px 0;color:#94a3b8;">' +
-        '<i class="fa-solid fa-inbox" style="font-size:40px;display:block;margin-bottom:14px;color:#cbd5e1;"></i>' +
-        '<div style="font-size:15px;">メールがありません</div></div>';
+        '<div style="text-align:center;padding:80px 0;color:#8e8e93;">' +
+        '<i class="fa-solid fa-inbox" style="font-size:48px;display:block;margin-bottom:16px;color:#d1d5db;"></i>' +
+        '<div style="font-size:16px;">メールがありません</div></div>';
       return;
     }
 
     list.forEach(function(email, i) {
-      var initial = email.from ? email.from.charAt(0).toUpperCase() : '?';
-      var bgColor = avatarBg(email.from || '?');
-      var dateStr = email.date.split(' ')[0].replace(/\d{4}\//, '');
-
       var div = document.createElement('div');
-      div.className = 'mail-card fade-in';
+      div.className = (isMobile ? 'mail-row' : 'mail-card') + ' fade-in';
       div.id = 'card-' + email.id;
-      div.style.animationDelay = (i * 25) + 'ms';
-
-      div.innerHTML =
-        '<div style="display:flex;gap:12px;align-items:flex-start;">' +
-          // アバター（モバイル）
-          '<div class="card-avatar" style="background:' + bgColor + ';">' + escHtml(initial) + '</div>' +
-          // エンベロープアイコン（デスクトップ）
-          '<div class="card-icon">' +
-            '<i class="fa-solid fa-envelope" style="color:#3b82f6;font-size:14px;"></i>' +
-          '</div>' +
-          // メインコンテンツ
-          '<div style="flex:1;min-width:0;">' +
-            '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:3px;">' +
-              '<div class="card-sender">' + escHtml(email.from) + '</div>' +
-              '<div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">' +
-                '<span class="card-date">' + dateStr + '</span>' +
-                (currentTab === 0
-                  ? '<button class="quick-save" onclick="event.stopPropagation();quickSave(\'' + email.id + '\')" title="クイック保存">⚡</button>'
-                  : '') +
-              '</div>' +
-            '</div>' +
-            '<div class="card-subject">' + escHtml(email.subject) + '</div>' +
-            '<div class="card-snippet">' + escHtml(email.snippet) + '</div>' +
-            (email.attachmentCount > 0
-              ? '<div class="card-attach"><i class="fa-solid fa-paperclip" style="font-size:11px;"></i>' + email.attachmentCount + '件の添付</div>'
-              : '') +
-          '</div>' +
-        '</div>';
-
+      div.style.animationDelay = (i * 20) + 'ms';
+      div.innerHTML = isMobile ? mobileCard(email) : desktopCard(email);
       (function(id) { div.onclick = function() { showDetail(id); }; })(email.id);
       container.appendChild(div);
     });
@@ -386,92 +364,69 @@
   function filterEmails() {
     var term = document.getElementById('searchInput').value.toLowerCase();
     if (!term) { renderEmails(null); return; }
-    var filtered = currentEmails.filter(function(e) {
-      return e.subject.toLowerCase().indexOf(term) !== -1 ||
-             e.from.toLowerCase().indexOf(term) !== -1;
-    });
-    renderEmails(filtered);
+    renderEmails(currentEmails.filter(function(e) {
+      return e.subject.toLowerCase().indexOf(term) !== -1 || e.from.toLowerCase().indexOf(term) !== -1;
+    }));
   }
 
   // ─── クイック保存 ───
   function quickSave(id) {
     showLoading('保存中...');
     google.script.run
-      .withSuccessHandler(function(result) {
-        hideLoading();
-        showToast(result.folderName, result.folderUrl, false);
-        loadEmails(true);
-      })
-      .withFailureHandler(function(err) {
-        hideLoading();
-        showToast('保存エラー: ' + err.message, '', true);
-      })
+      .withSuccessHandler(function(r) { hideLoading(); showToast(r.folderName, r.folderUrl, false); loadEmails(true); })
+      .withFailureHandler(function(e) { hideLoading(); showToast('保存エラー: ' + e.message, '', true); })
       .quickSaveToDrive(id);
   }
 
-  // ─── 詳細 ───
+  // ─── 詳細表示 ───
   function showDetail(id) {
     currentEmailId = id;
-    document.querySelectorAll('.mail-card').forEach(function(c) { c.classList.remove('selected'); });
+    document.querySelectorAll('.mail-card,.mail-row').forEach(function(c) { c.classList.remove('selected'); });
     var card = document.getElementById('card-' + id);
     if (card) card.classList.add('selected');
-
     showLoading('本文を取得中...');
     google.script.run
-      .withSuccessHandler(function(detail) {
-        hideLoading();
-        isMobile ? renderDetailMobile(detail) : renderDetailDesktop(detail);
-      })
-      .withFailureHandler(function(err) {
-        hideLoading();
-        showToast('取得エラー: ' + err.message, '', true);
-      })
+      .withSuccessHandler(function(d) { hideLoading(); isMobile ? renderDetailMobile(d) : renderDetailDesktop(d); })
+      .withFailureHandler(function(e) { hideLoading(); showToast('取得エラー: ' + e.message, '', true); })
       .getEmailDetail(id);
   }
 
-  function renderDetailDesktop(detail) {
+  function renderDetailDesktop(d) {
     document.getElementById('emptyState').style.display = 'none';
-    var area = document.getElementById('detailAreaDesktop');
-    area.style.display = 'flex';
-    document.getElementById('detailSubjectDesktop').textContent = detail.subject;
+    document.getElementById('detailAreaDesktop').style.display = 'flex';
+    document.getElementById('detailSubjectDesktop').textContent = d.subject;
     document.getElementById('detailMetaDesktop').innerHTML =
-      '<span><i class="fa-solid fa-user" style="margin-right:5px;color:#cbd5e1;"></i>' + escHtml(detail.from) + '</span>' +
-      '<span><i class="fa-solid fa-clock" style="margin-right:5px;color:#cbd5e1;"></i>' + escHtml(detail.date) + '</span>';
-    document.getElementById('detailBody').innerHTML = detail.body;
+      '<span><i class="fa-solid fa-user" style="margin-right:5px;color:#cbd5e1;"></i>' + escHtml(d.from) + '</span>' +
+      '<span><i class="fa-solid fa-clock" style="margin-right:5px;color:#cbd5e1;"></i>' + escHtml(d.date) + '</span>';
+    document.getElementById('detailBody').innerHTML = d.body;
     var attachArea = document.getElementById('attachArea');
     var attachList = document.getElementById('attachList');
     attachList.innerHTML = '';
-    if (detail.attachments.length > 0) {
+    if (d.attachments.length > 0) {
       attachArea.style.display = 'block';
-      detail.attachments.forEach(function(att) {
-        attachList.innerHTML +=
-          '<div style="display:flex;align-items:center;gap:10px;background:#f8fafc;border-radius:10px;padding:10px 12px;">' +
-          '<i class="fa-solid fa-file" style="color:#94a3b8;"></i>' +
-          '<div><div style="font-size:13px;color:#374151;">' + escHtml(att.name) + '</div>' +
-          '<div style="font-size:11px;color:#94a3b8;">' + att.size + '</div></div></div>';
+      d.attachments.forEach(function(a) {
+        attachList.innerHTML += '<div style="display:flex;align-items:center;gap:10px;background:#f8fafc;border-radius:10px;padding:10px 12px;"><i class="fa-solid fa-file" style="color:#94a3b8;"></i><div><div style="font-size:13px;color:#374151;">' + escHtml(a.name) + '</div><div style="font-size:11px;color:#94a3b8;">' + a.size + '</div></div></div>';
       });
-    } else {
-      attachArea.style.display = 'none';
-    }
+    } else { attachArea.style.display = 'none'; }
     document.getElementById('memoAreaDesktop').value = '';
   }
 
-  function renderDetailMobile(detail) {
-    document.getElementById('detailSubjectMobile').textContent = detail.subject;
+  function renderDetailMobile(d) {
+    document.getElementById('detailSubjectMobile').textContent = d.subject;
     var html =
-      '<div style="font-size:13px;color:#94a3b8;margin-bottom:14px;line-height:1.6;">' +
-      '<div>' + escHtml(detail.from) + '</div>' +
-      '<div>' + escHtml(detail.date) + '</div>' +
+      '<div style="font-size:14px;color:#8e8e93;margin-bottom:16px;line-height:1.7;">' +
+        '<div style="font-weight:600;color:#374151;">' + escHtml(d.from) + '</div>' +
+        '<div>' + escHtml(d.date) + '</div>' +
       '</div>' +
-      '<div style="font-size:15px;color:#374151;line-height:1.8;">' + detail.body + '</div>';
-    if (detail.attachments.length > 0) {
-      html += '<div style="margin-top:20px;border-top:1px solid #f1f5f9;padding-top:16px;">' +
-        '<div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:#94a3b8;margin-bottom:10px;">添付ファイル</div>';
-      detail.attachments.forEach(function(att) {
-        html += '<div style="display:flex;align-items:center;gap:12px;background:#f8fafc;border-radius:12px;padding:12px 14px;margin-bottom:8px;">' +
-          '<i class="fa-solid fa-file" style="color:#94a3b8;font-size:18px;"></i>' +
-          '<div><div style="font-size:14px;">' + escHtml(att.name) + '</div>' +
-          '<div style="font-size:12px;color:#94a3b8;">' + att.size + '</div></div></div>';
+      '<div style="font-size:16px;color:#1a1a1a;line-height:1.8;">' + d.body + '</div>';
+    if (d.attachments.length > 0) {
+      html += '<div style="margin-top:20px;border-top:1px solid #f0f0f0;padding-top:16px;">' +
+        '<div style="font-size:13px;font-weight:600;color:#8e8e93;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.06em;">添付ファイル</div>';
+      d.attachments.forEach(function(a) {
+        html += '<div style="display:flex;align-items:center;gap:12px;background:#f8fafc;border-radius:14px;padding:14px;margin-bottom:8px;">' +
+          '<i class="fa-solid fa-file" style="color:#8e8e93;font-size:20px;"></i>' +
+          '<div><div style="font-size:15px;color:#1a1a1a;">' + escHtml(a.name) + '</div>' +
+          '<div style="font-size:13px;color:#8e8e93;">' + a.size + '</div></div></div>';
       });
       html += '</div>';
     }
@@ -483,14 +438,10 @@
   function clearDetail() {
     document.getElementById('emptyState').style.display = 'flex';
     document.getElementById('detailAreaDesktop').style.display = 'none';
-    document.querySelectorAll('.mail-card').forEach(function(c) { c.classList.remove('selected'); });
+    document.querySelectorAll('.mail-card,.mail-row').forEach(function(c) { c.classList.remove('selected'); });
     currentEmailId = null;
   }
-
-  function backToList() {
-    document.getElementById('detailViewMobile').style.display = 'none';
-    clearDetail();
-  }
+  function backToList() { document.getElementById('detailViewMobile').style.display = 'none'; clearDetail(); }
 
   // ─── フォルダ名モーダル ───
   function showFolderModal() {
@@ -498,40 +449,24 @@
     document.getElementById('folderModal').style.display = 'flex';
     setTimeout(function() { document.getElementById('folderNameInput').focus(); }, 250);
   }
-  function closeFolderModal() {
-    document.getElementById('folderModal').style.display = 'none';
-  }
+  function closeFolderModal() { document.getElementById('folderModal').style.display = 'none'; }
 
   // ─── Drive保存 ───
   function saveToDrive() {
     closeFolderModal();
-    var memo = (isMobile
-      ? document.getElementById('memoAreaMobile')
-      : document.getElementById('memoAreaDesktop')).value.trim();
+    var memo = (isMobile ? document.getElementById('memoAreaMobile') : document.getElementById('memoAreaDesktop')).value.trim();
     var customName = document.getElementById('folderNameInput').value.trim();
     showLoading('Driveに保存中...');
     google.script.run
-      .withSuccessHandler(function(result) {
-        hideLoading();
-        if (result.success) {
-          showToast(result.folderName, result.folderUrl, false);
-          backToList();
-          loadEmails();
-        }
-      })
-      .withFailureHandler(function(err) {
-        hideLoading();
-        showToast('保存エラー: ' + err.message, '', true);
-      })
+      .withSuccessHandler(function(r) { hideLoading(); if (r.success) { showToast(r.folderName, r.folderUrl, false); backToList(); loadEmails(); } })
+      .withFailureHandler(function(e) { hideLoading(); showToast('保存エラー: ' + e.message, '', true); })
       .processToDrive(currentEmailId, memo, customName || null);
   }
 
   // ─── トースト ───
   function showToast(text, url, isError) {
     var toast = document.getElementById('toast');
-    document.getElementById('toastIcon').className = isError
-      ? 'fa-solid fa-circle-exclamation'
-      : 'fa-solid fa-check-circle';
+    document.getElementById('toastIcon').className = isError ? 'fa-solid fa-circle-exclamation' : 'fa-solid fa-check-circle';
     document.getElementById('toastIcon').style.color = isError ? '#f87171' : '#4ade80';
     document.getElementById('toastText').innerHTML = escHtml(text) +
       (url ? ' <a href="' + url + '" target="_blank" style="text-decoration:underline;margin-left:6px;">開く→</a>' : '');
@@ -543,23 +478,19 @@
   // ─── タブ切替 ───
   function switchTab(tab) {
     currentTab = tab;
-    // ヘッダータブ
     document.getElementById('tab0').classList.toggle('active', tab === 0);
     document.getElementById('tab1').classList.toggle('active', tab === 1);
     document.getElementById('tab0').style.background = tab === 0 ? '#2563eb' : 'transparent';
     document.getElementById('tab1').style.background = tab === 1 ? '#2563eb' : 'transparent';
-    // ボトムタブ
-    document.getElementById('btab0').style.color = tab === 0 ? '#2563eb' : '#94a3b8';
-    document.getElementById('btab1').style.color = tab === 1 ? '#2563eb' : '#94a3b8';
+    document.getElementById('btab0').style.color = tab === 0 ? '#2563eb' : '#8e8e93';
+    document.getElementById('btab1').style.color = tab === 1 ? '#2563eb' : '#8e8e93';
     document.getElementById('searchInput').value = '';
     loadEmails();
   }
 
   // ─── XSSエスケープ ───
   function escHtml(str) {
-    return String(str)
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
   // ─── 初期化 ───
