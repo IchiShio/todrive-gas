@@ -1,4 +1,17 @@
-function doGet() {
+function doGet(e) {
+  if (e && e.parameter && e.parameter.manifest === '1') {
+    var manifest = {
+      name: 'ToDrive',
+      short_name: 'ToDrive',
+      display: 'standalone',
+      background_color: '#ffffff',
+      theme_color: '#2563eb',
+      start_url: '?utm_source=homescreen',
+      icons: []
+    };
+    return ContentService.createTextOutput(JSON.stringify(manifest))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
   return HtmlService.createTemplateFromFile('Index')
     .evaluate()
     .setTitle('ToDrive')
@@ -60,6 +73,13 @@ function getEmailDetail(id) {
   };
 }
 
+// _ToDrive ベースフォルダを取得（なければ作成）
+function getTodriveBaseFolder() {
+  var root = DriveApp.getRootFolder();
+  var folders = root.getFoldersByName('_ToDrive');
+  return folders.hasNext() ? folders.next() : root.createFolder('_ToDrive');
+}
+
 // Drive保存処理
 function processToDrive(emailId, memoText, customFolderName) {
   var msg = GmailApp.getMessageById(emailId);
@@ -74,8 +94,8 @@ function processToDrive(emailId, memoText, customFolderName) {
   var folderName = customFolderName ||
     (dateStr + '_' + safeName + '_' + senderName);
 
-  // Driveフォルダ作成
-  var folder = DriveApp.getRootFolder().createFolder(folderName);
+  // _ToDrive内にフォルダ作成
+  var folder = getTodriveBaseFolder().createFolder(folderName);
 
   // 00_処理指示メモ.md
   var memoContent =
@@ -120,4 +140,9 @@ function processToDrive(emailId, memoText, customFolderName) {
     folderUrl: folder.getUrl(),
     folderName: folderName
   };
+}
+
+// クイック保存（メモなし・フォルダ名自動）
+function quickSaveToDrive(emailId) {
+  return processToDrive(emailId, '', null);
 }

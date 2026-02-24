@@ -2,16 +2,19 @@
 <html>
 <head>
   <base target="_top">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ToDrive">
+  <meta name="theme-color" content="#2563eb">
+  <link rel="manifest" href="?manifest=1">
   <title>ToDrive</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
     * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
-    html, body { height: 100%; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f1f5f9; }
+    html { height: 100%; margin: 0; padding: 0; }
+    body { height: 100dvh; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f1f5f9; }
 
     /* カード */
     .mail-card { transition: background 0.12s, transform 0.12s; cursor: pointer; }
@@ -39,12 +42,19 @@
     /* 詳細パネル内のメール本文 */
     #detailBody img { max-width: 100%; height: auto; }
     #detailBody a { color: #2563eb; text-decoration: underline; }
+
+    /* iOSズーム抑制（16px以上でズームしない） */
+    input, textarea { font-size: 16px; }
+
+    /* Safe Area */
+    header { padding-top: env(safe-area-inset-top); }
+    .mobile-action-bar { padding-bottom: max(12px, env(safe-area-inset-bottom)); }
   </style>
 </head>
 <body>
 
 <!-- ===== 全体レイアウト ===== -->
-<div style="display:flex; flex-direction:column; height:100vh; overflow:hidden; background:#fff;">
+<div style="display:flex; flex-direction:column; height:100dvh; overflow:hidden; background:#fff;">
 
   <!-- ── グローバルヘッダー ── -->
   <header style="display:flex; align-items:center; justify-content:space-between; padding:0 20px; height:56px; border-bottom:1px solid #e2e8f0; background:#fff; flex-shrink:0; z-index:40;">
@@ -55,9 +65,9 @@
       <span style="font-size:18px;font-weight:700;color:#0f172a;letter-spacing:-0.3px;">ToDrive</span>
     </div>
     <div style="display:flex;align-items:center;gap:6px;">
-      <button onclick="switchTab(0)" id="tab0" class="tab-btn active" style="padding:6px 16px;border-radius:20px;border:none;font-size:13px;cursor:pointer;">未処理</button>
-      <button onclick="switchTab(1)" id="tab1" class="tab-btn" style="padding:6px 16px;border-radius:20px;border:none;font-size:13px;cursor:pointer;background:transparent;">履歴</button>
-      <button onclick="refreshEmails()" id="refreshBtn" title="更新" style="width:32px;height:32px;border-radius:50%;border:1px solid #e2e8f0;background:#fff;color:#64748b;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+      <button onclick="switchTab(0)" id="tab0" class="tab-btn active" style="padding:10px 20px;border-radius:20px;border:none;font-size:13px;cursor:pointer;min-height:44px;">未処理</button>
+      <button onclick="switchTab(1)" id="tab1" class="tab-btn" style="padding:10px 20px;border-radius:20px;border:none;font-size:13px;cursor:pointer;background:transparent;min-height:44px;">履歴</button>
+      <button onclick="refreshEmails()" id="refreshBtn" title="更新" style="width:40px;height:40px;border-radius:50%;border:1px solid #e2e8f0;background:#fff;color:#64748b;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
         <i class="fa-solid fa-rotate-right"></i>
       </button>
     </div>
@@ -75,7 +85,7 @@
           <i class="fa-solid fa-magnifying-glass" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:13px;"></i>
           <input id="searchInput" type="search" placeholder="件名・送信者で検索..."
                  oninput="filterEmails()"
-                 style="width:100%;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:9px 12px 9px 34px;font-size:13px;outline:none;transition:border-color 0.15s;"
+                 style="width:100%;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:9px 12px 9px 34px;outline:none;transition:border-color 0.15s;"
                  onfocus="this.style.borderColor='#2563eb'" onblur="this.style.borderColor='#e2e8f0'">
         </div>
       </div>
@@ -125,7 +135,7 @@
           <div style="padding:20px 24px;">
             <div style="font-size:12px;font-weight:600;color:#475569;margin-bottom:8px;">処理指示メモ</div>
             <textarea id="memoAreaDesktop" rows="5"
-              style="width:100%;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px;font-size:13px;resize:vertical;outline:none;background:#f8fafc;line-height:1.6;transition:border-color 0.15s;"
+              style="width:100%;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px;resize:vertical;outline:none;background:#f8fafc;line-height:1.6;transition:border-color 0.15s;"
               placeholder="例：請求書をfreeeに入力後、経理にSlack連絡"
               onfocus="this.style.borderColor='#2563eb';this.style.background='#fff';"
               onblur="this.style.borderColor='#e2e8f0';this.style.background='#f8fafc';"></textarea>
@@ -148,36 +158,39 @@
 
 <!-- ===== モバイル：フルスクリーン詳細（~768px相当） ===== -->
 <div id="detailViewMobile" style="display:none;position:fixed;inset:0;background:#fff;z-index:50;flex-direction:column;">
+  <!-- ヘッダー -->
   <div style="padding:12px 16px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:12px;flex-shrink:0;">
-    <button onclick="backToList()" style="color:#2563eb;background:none;border:none;font-size:20px;cursor:pointer;padding:4px;">
+    <button onclick="backToList()" style="color:#2563eb;background:none;border:none;font-size:20px;cursor:pointer;padding:4px;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;">
       <i class="fa-solid fa-chevron-left"></i>
     </button>
     <div id="detailSubjectMobile" style="flex:1;font-size:15px;font-weight:600;color:#0f172a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></div>
   </div>
+  <!-- スクロールコンテンツ（本文 + メモ） -->
   <div style="flex:1;overflow-y:auto;">
     <div id="detailContentMobile" style="padding:16px;"></div>
-    <div style="padding:16px;border-top:1px solid #f1f5f9;">
-      <div style="font-size:12px;font-weight:600;color:#475569;margin-bottom:8px;">処理指示メモ</div>
+    <div style="padding:0 16px 16px;border-top:1px solid #f1f5f9;">
+      <div style="font-size:12px;font-weight:600;color:#475569;margin-bottom:8px;padding-top:16px;">処理指示メモ</div>
       <textarea id="memoAreaMobile" rows="4"
-        style="width:100%;border:1px solid #e2e8f0;border-radius:12px;padding:12px;font-size:14px;resize:none;outline:none;background:#f8fafc;"
+        style="width:100%;border:1px solid #e2e8f0;border-radius:12px;padding:12px;resize:none;outline:none;background:#f8fafc;line-height:1.6;"
         placeholder="例：請求書をfreeeに入力後、経理にSlack連絡"></textarea>
-      <div style="margin-top:10px;display:flex;gap:8px;">
-        <button onclick="backToList()" style="flex:1;padding:13px;border-radius:12px;border:1px solid #e2e8f0;background:#fff;font-size:13px;color:#64748b;cursor:pointer;">キャンセル</button>
-        <button onclick="showFolderModal()" style="flex:2;padding:13px;border-radius:12px;border:none;background:#2563eb;color:#fff;font-size:13px;font-weight:700;cursor:pointer;">
-          <i class="fa-solid fa-cloud-arrow-up"></i> Driveに保存
-        </button>
-      </div>
     </div>
+  </div>
+  <!-- 固定アクションバー（スクロール外） -->
+  <div class="mobile-action-bar" style="background:#fff;padding:12px 16px;border-top:1px solid #f1f5f9;display:flex;gap:8px;flex-shrink:0;">
+    <button onclick="backToList()" style="flex:1;padding:16px;border-radius:12px;border:1px solid #e2e8f0;background:#fff;font-size:13px;color:#64748b;cursor:pointer;">キャンセル</button>
+    <button onclick="showFolderModal()" style="flex:2;padding:16px;border-radius:12px;border:none;background:#2563eb;color:#fff;font-size:13px;font-weight:700;cursor:pointer;">
+      <i class="fa-solid fa-cloud-arrow-up"></i> Driveに保存
+    </button>
   </div>
 </div>
 
 <!-- ===== フォルダ名モーダル ===== -->
-<div id="folderModal" style="display:none;position:fixed;inset:0;z-index:60;background:rgba(0,0,0,0.35);display:none;align-items:flex-end;justify-content:center;">
+<div id="folderModal" style="display:none;position:fixed;inset:0;z-index:60;background:rgba(0,0,0,0.35);align-items:flex-end;justify-content:center;">
   <div class="slide-up" style="background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:520px;padding:24px;">
     <div style="font-size:16px;font-weight:700;color:#0f172a;margin-bottom:4px;">フォルダ名</div>
     <div style="font-size:12px;color:#94a3b8;margin-bottom:12px;">空欄で自動生成（推奨）</div>
     <input id="folderNameInput" type="text" placeholder="例: 2026_請求書_田中商事"
-           style="width:100%;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px;font-size:14px;outline:none;margin-bottom:16px;"
+           style="width:100%;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px;outline:none;margin-bottom:16px;"
            onfocus="this.style.borderColor='#2563eb'" onblur="this.style.borderColor='#e2e8f0'">
     <div style="display:flex;gap:10px;">
       <button onclick="closeFolderModal()" style="flex:1;padding:13px;border-radius:12px;border:1px solid #e2e8f0;background:#fff;font-size:14px;color:#64748b;cursor:pointer;">キャンセル</button>
@@ -193,7 +206,7 @@
 </div>
 
 <!-- ===== トースト ===== -->
-<div id="toast" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:80;background:#0f172a;color:#fff;padding:12px 20px;border-radius:14px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,0.2);display:none;align-items:center;gap:8px;white-space:nowrap;" class="slide-up">
+<div id="toast" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:80;background:#0f172a;color:#fff;padding:12px 20px;border-radius:14px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,0.2);align-items:center;gap:8px;white-space:nowrap;" class="slide-up">
   <i id="toastIcon" class="fa-solid fa-check-circle" style="color:#4ade80;"></i>
   <span id="toastText"></span>
 </div>
@@ -274,7 +287,13 @@
               '<div style="font-size:11px;color:#94a3b8;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escHtml(email.from) + '</div>' +
             '</div>' +
           '</div>' +
-          '<div style="font-size:11px;color:#94a3b8;flex-shrink:0;">' + email.date.split(' ')[0].replace(/\d{4}\//, '') + '</div>' +
+          '<div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">' +
+            '<div style="font-size:11px;color:#94a3b8;">' + email.date.split(' ')[0].replace(/\d{4}\//, '') + '</div>' +
+            (currentTab === 0
+              ? '<button onclick="event.stopPropagation(); quickSave(\'' + email.id + '\')" title="クイック保存" ' +
+                'style="width:32px;height:32px;border-radius:8px;border:none;background:#eff6ff;color:#3b82f6;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">⚡</button>'
+              : '') +
+          '</div>' +
         '</div>' +
         '<div style="margin-top:8px;font-size:12px;color:#64748b;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.5;">' + escHtml(email.snippet) + '</div>' +
         (email.attachmentCount > 0
@@ -294,6 +313,22 @@
              e.from.toLowerCase().indexOf(term) !== -1;
     });
     renderEmails(filtered);
+  }
+
+  // ===== クイック保存 =====
+  function quickSave(id) {
+    showLoading('保存中...');
+    google.script.run
+      .withSuccessHandler(function(result) {
+        hideLoading();
+        showToast(result.folderName, result.folderUrl, false);
+        loadEmails(true);
+      })
+      .withFailureHandler(function(err) {
+        hideLoading();
+        showToast('保存エラー: ' + err.message, '', true);
+      })
+      .quickSaveToDrive(id);
   }
 
   // ===== 詳細 =====
@@ -454,7 +489,15 @@
   }
 
   // ===== 初期化 =====
-  window.onload = function() { loadEmails(); };
+  window.onload = function() {
+    loadEmails();
+    // textarea フォーカス時に自動スクロール（キーボード表示対応）
+    document.querySelectorAll('textarea').forEach(function(ta) {
+      ta.addEventListener('focus', function() {
+        setTimeout(function() { ta.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 300);
+      });
+    });
+  };
 </script>
 </body>
 </html>
