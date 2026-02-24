@@ -11,23 +11,35 @@ function include(filename) {
 }
 
 // 未処理 or 履歴メール取得
-function getEmails(isHistory) {
+function getEmails(isHistory, forceRefresh) {
+  var cacheKey = isHistory ? 'emails_history' : 'emails_pending';
+  var cache = CacheService.getUserCache();
+
+  if (!forceRefresh) {
+    var cached = cache.get(cacheKey);
+    if (cached) return JSON.parse(cached);
+  }
+
   var query = isHistory ? 'label:Processed' : 'label:ToDrive -label:Processed';
-  var threads = GmailApp.search(query, 0, 50);
+  var threads = GmailApp.search(query, 0, 20);
   var emails = [];
   threads.forEach(function(t) {
+    var snippet = t.getSnippet(); // getPlainBody() より高速（本文全取得しない）
     t.getMessages().forEach(function(m) {
       emails.push({
         id: m.getId(),
         subject: m.getSubject() || '(無題)',
         from: m.getFrom().split('<')[0].trim(),
         date: Utilities.formatDate(m.getDate(), 'JST', 'yyyy/MM/dd HH:mm'),
-        snippet: m.getPlainBody().substring(0, 100).replace(/\n/g, ' ') + '...',
+        snippet: snippet,
         attachmentCount: m.getAttachments().length
       });
     });
   });
-  return emails.sort(function(a, b) { return b.date.localeCompare(a.date); });
+  emails.sort(function(a, b) { return b.date.localeCompare(a.date); });
+
+  try { cache.put(cacheKey, JSON.stringify(emails), 60); } catch(e) {}
+  return emails;
 }
 
 // メール詳細取得
@@ -98,6 +110,11 @@ function processToDrive(emailId, memoText, customFolderName) {
     GmailApp.createLabel('Processed');
   msg.getThread().addLabel(processedLabel);
   msg.getThread().moveToArchive();
+
+  // キャッシュ無効化（次回ロードで最新状態を反映）
+  var cache = CacheService.getUserCache();
+  cache.remove('emails_pending');
+  cache.remove('emails_history');
 
   return {
     success: true,

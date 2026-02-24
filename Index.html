@@ -54,9 +54,12 @@
       </div>
       <span style="font-size:18px;font-weight:700;color:#0f172a;letter-spacing:-0.3px;">ToDrive</span>
     </div>
-    <div style="display:flex;gap:6px;">
+    <div style="display:flex;align-items:center;gap:6px;">
       <button onclick="switchTab(0)" id="tab0" class="tab-btn active" style="padding:6px 16px;border-radius:20px;border:none;font-size:13px;cursor:pointer;">未処理</button>
       <button onclick="switchTab(1)" id="tab1" class="tab-btn" style="padding:6px 16px;border-radius:20px;border:none;font-size:13px;cursor:pointer;background:transparent;">履歴</button>
+      <button onclick="refreshEmails()" id="refreshBtn" title="更新" style="width:32px;height:32px;border-radius:50%;border:1px solid #e2e8f0;background:#fff;color:#64748b;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <i class="fa-solid fa-rotate-right"></i>
+      </button>
     </div>
   </header>
 
@@ -213,7 +216,7 @@
   }
 
   // ===== メール一覧 =====
-  function loadEmails() {
+  function loadEmails(forceRefresh) {
     showLoading('メールを取得中...');
     clearDetail();
     google.script.run
@@ -226,7 +229,18 @@
         hideLoading();
         showToast('エラー: ' + err.message, '', true);
       })
-      .getEmails(currentTab === 1);
+      .getEmails(currentTab === 1, !!forceRefresh);
+  }
+
+  function refreshEmails() {
+    var btn = document.getElementById('refreshBtn');
+    btn.style.pointerEvents = 'none';
+    btn.querySelector('i').classList.add('spin');
+    loadEmails(true);
+    setTimeout(function() {
+      btn.style.pointerEvents = '';
+      btn.querySelector('i').classList.remove('spin');
+    }, 2000);
   }
 
   function renderEmails(filtered) {
