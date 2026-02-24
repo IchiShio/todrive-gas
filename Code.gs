@@ -31,7 +31,7 @@ function getEmails(isHistory, forceRefresh) {
       subject: m.getSubject() || '(無題)',
       from: m.getFrom().split('<')[0].trim(),
       date: Utilities.formatDate(m.getDate(), 'JST', 'yyyy/MM/dd HH:mm'),
-      snippet: t.getSnippet(),
+      snippet: m.getPlainBody().substring(0, 100).replace(/\n/g, ' '),
       attachmentCount: m.getAttachments().length
     });
   });
