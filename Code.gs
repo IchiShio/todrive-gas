@@ -24,16 +24,15 @@ function getEmails(isHistory, forceRefresh) {
   var threads = GmailApp.search(query, 0, 20);
   var emails = [];
   threads.forEach(function(t) {
-    var snippet = t.getSnippet(); // getPlainBody() より高速（本文全取得しない）
-    t.getMessages().forEach(function(m) {
-      emails.push({
-        id: m.getId(),
-        subject: m.getSubject() || '(無題)',
-        from: m.getFrom().split('<')[0].trim(),
-        date: Utilities.formatDate(m.getDate(), 'JST', 'yyyy/MM/dd HH:mm'),
-        snippet: snippet,
-        attachmentCount: m.getAttachments().length
-      });
+    var messages = t.getMessages();
+    var m = messages[messages.length - 1]; // スレッド最新メッセージのみ
+    emails.push({
+      id: m.getId(),
+      subject: m.getSubject() || '(無題)',
+      from: m.getFrom().split('<')[0].trim(),
+      date: Utilities.formatDate(m.getDate(), 'JST', 'yyyy/MM/dd HH:mm'),
+      snippet: t.getSnippet(),
+      attachmentCount: m.getAttachments().length
     });
   });
   emails.sort(function(a, b) { return b.date.localeCompare(a.date); });
